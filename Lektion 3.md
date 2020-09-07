@@ -95,7 +95,8 @@ Bilden visar vårt projekt SimpleWebHalloWorld som en web-service på portarna 8
 - Logga in via azure i CLI:![img](https://media.discordapp.net/attachments/280760711620067330/752515793723588659/unknown.png)
 
 - För att kunna publicera registret måste man tagga med register-loginservern: ![img](https://media.discordapp.net/attachments/280760711620067330/752516667984052424/unknown.png)
-- För att ladda upp registret använder vi oss av docker push, detta skapar repot med webtest:v1 img: ![image-20200907151554292](C:\Users\Benka1\AppData\Roaming\Typora\typora-user-images\image-20200907151554292.png)
+
+- För att ladda upp registret använder vi oss av docker push, detta skapar repot med webtest: ![img](https://cdn.discordapp.com/attachments/280760711620067330/752537737999024138/image-20200907151554292.png)
 - Sedan tar vi bort vår img lokalt och vi får Untagged på de images som den image som det berör. ![img](https://cdn.discordapp.com/attachments/280760711620067330/752517983485820979/unknown.png)
 
 
