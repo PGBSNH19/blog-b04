@@ -8,7 +8,7 @@ Lektion:
 
 [03: Docker and Azure Containers](03.md)
 
-[04: Continuous integration and Deployment](04.md)
+[04: Continuous Integration and Deployment](04.md)
 
 05: beskrivning
 
