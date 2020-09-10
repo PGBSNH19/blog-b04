@@ -2,13 +2,13 @@
 
 Lektion:
 
-[01: beskrivning](01.md)
+[01: Lektion 1 Målnet, Azure och AWS](01.md)
 
-02: beskrivning
+[02: Lektion 2 Virtuella maskiner](02.md)
 
-03: beskrivning
+[03: Docker and Azure Containers](03.md)
 
-04: beskrivning
+[04: Continuous integration and Deployment](04.md)
 
 05: beskrivning
 
