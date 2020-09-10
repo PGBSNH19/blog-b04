@@ -109,3 +109,22 @@ Om allt fungerar som det ska kommer vi nu få vår sha-nyckel som respons och de
 
 
 
+## 3a: Azure Container Instance
+
+Log in to Azure in your cli: az acr login --name <myRegistryName>
+
+Create a resource group: az group create --name <myResourceGroup> --location northeurope
+
+Authenticate using the server principal
+
+Navigate to your registry inside the azure portal, in the meny on the left klick Access Keys.
+
+Enable Admin user then run the following script:
+
+az container create \
+    --resource-group myResourceGroup \
+    --name mycontainer \
+    --image mycontainerregistry.azurecr.io/myimage:v1 \
+    --registry-login-server mycontainerregistry.azurecr.io \
+    --registry-username <servicePrincipalID> \
+    --registry-password <servicePrincipalPassword>
