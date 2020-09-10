@@ -2,7 +2,7 @@
 
 Lektion:
 
-[01: beskrivning](00.md)
+[01: beskrivning](01.md)
 
 02: beskrivning
 
