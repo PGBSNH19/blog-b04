@@ -1,130 +1,227 @@
+## 1a: Hello World in Docker
 
+1. Install Docker: [Get Docker](https://docs.docker.com/get-docker/)
 
+2. Reboot your computer
 
+3. Add a Docker file
 
-# Dockerguide Anton & Benjamin
+   Navigate to your repository in your CLI and then enter the following command:
 
-Installera Docker *https://www.docker.com/get-started* 
+   ```
+   touch Dockerfile
+   ```
 
-* Högerklicka på din solution, sedan Add->Docker support
+   This will generate a dockerfile in your current directory. 
 
-  En Dockerfile kommer nu att genereras i ditt projekt.
+   *Note: You can also add the dockerfile by rightclicking the solution, then Add->Dockersupport..* 
 
-![img](https://media.discordapp.net/attachments/280760711620067330/752458331884355640/unknown.png?width=400&height=255)
+   Open the file in Visual Studio or any other texte-ditor and add the following:
 
-* Första raden väljer vi basen som är ASP.NET 3.1 core (rad 3)
+   ```
+   FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
+   WORKDIR /app
+   EXPOSE 80
+   EXPOSE 443
+   
+   FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
+   WORKDIR /src
+   COPY ["SimpleWebHalloWorld.csproj", ""]
+   RUN dotnet restore "./SimpleWebHalloWorld.csproj"
+   COPY . .
+   WORKDIR "/src/."
+   RUN dotnet build "SimpleWebHalloWorld.csproj" -c Release -o /app/build
+   
+   FROM build AS publish
+   RUN dotnet publish "SimpleWebHalloWorld.csproj" -c Release -o /app/publish
+   
+   FROM base AS final
+   WORKDIR /app
+   COPY --from=publish /app/publish .
+   ENTRYPOINT ["dotnet", "SimpleWebHalloWorld.dll"]
+   ```
 
-* Följande kod öppnar portar för din container.
+   This will expose the ports 80 (http) and 443 (https) for your container, select the workdirectory and select ASP.NET 3.1 core for your image. 
 
-* Väljer vilket directory (rad 4).
+   We run the dotnet restore to make sure that we copy all the dependencies required to our image. 
 
-* Port 80 exponeras för HTTP (rad 5).
+   **We also have to change the ports in our launchSettings.json**
 
-* Port 443 exponeras för HTTPS (rad 6).
+   Open launchSettings.json in Visual Studio or any other texteditor.
 
-![img](https://cdn.discordapp.com/attachments/280760711620067330/752506582385819708/image-20200907112353268.png)
+   Find and edit the applicationUrl like this:
 
-## Ändra vilka portar din container ska lyssna efter
+   ```
+         "applicationUrl": "https://localhost:443;http://localhost:80"
+   ```
 
-* Öppna launchSettings.json
+4. Build your image and run it in a container
 
-  ![img](https://cdn.discordapp.com/attachments/280760711620067330/752506582385819708/image-20200907112353268.png)
+   Now when we have set up our Dockerfile, we will build our container. Open your CLI of choice and login to Docker, then run the following command:
 
-* Ändra portarna för localhost till 443 och 80 (rad 24).
+   ```
+   docker build --t <image_name> .
+   ```
 
-![img](https://cdn.discordapp.com/attachments/280760711620067330/752506587851128853/image-20200907114359729.png)
+   Choose a name for your image in the <> brackets. 
 
+   This will build an image with your specified name and store it with Docker. To remove an image you can enter:
 
+   ```
+   docker rmi <imagename>
+   ```
 
-## Bygg din image & kör den via Docker
+   Now that we have an image we need to put it in a container. To put the image in a container and run it with Docker, enter the following command:
 
-Öppna din CLI och navigera till ditt projekt
+   ```
+   docker run -d -p <internal_port>:<external_port> --name <container_name> <image_name>
+   ```
 
-Kör följande kommandon:
+   This will generate a container using the specified image in that container and then run this on the specified ports. The complete command can look like this:
 
-* docker build --t [*välj ett namn på din image]* .
+   ```
+   docker run -d -p 8080:80 --name simplewebhalloworldcontainer simplewebhalloworld
+   ```
 
-  exempel:
+   *Note: -d is the internal port and -p is the external port*.
 
-![img](https://cdn.discordapp.com/attachments/280760711620067330/752506589642096640/image-20200907125035428.png)
+   Open the Docker dekstop-app, the example above should look like this: 
 
-* docker run -d -p 8080:80 --name *[välj ett namn på din container]* *[namn på din image]*
+   ![img](https://media.discordapp.net/attachments/280760711620067330/752506591902695454/image-20200907125654256.png?width=400&height=31)
 
-  exempel: 
+## 1b: Hello World with Docker Compose
 
-  ![img](https://cdn.discordapp.com/attachments/280760711620067330/752506591273811978/image-20200907125355994.png)
+1. Add a docker-compose file to your project.
 
-  -d representerar den porten som din container kommer lyssna på lokalt, och -p den port som kommer lyssna efter externt.
+   Navigate to your repository in your CLI and then enter the following command:
 
-  --name är det namn som din container kommer tillges. 
+   ```
+   touch docker-compose.yml
+   ```
 
-  Efter att kommandot har körts så borde en nyckel skrivas ut i din CLI som svar, samt att du ska nu kunna se din container i Docker Desktop. 
+   Open the file in Visual Studio or any other text-editor, and add the following:
 
-  exempel: 
+```
+version: '3'
+services:
+	web:
+		build: .
+		ports:
+			- "8080:80"
+```
 
-  ![img](https://cdn.discordapp.com/attachments/280760711620067330/752506591902695454/image-20200907125654256.png)
+This will add a webservice on the ports 8080:80. You may enter more than one service in this file, but you need to make sure that no services more than one run on the same ports. 
 
-## Kör din image med  Docker compose
 
-Skapa en fil i din projektmapp med namnet docker-compose.yml
 
-I bash kan du navigera till projektmappen och skrifa *touch docker-compose.yml*
+## 2 Publish your Hello World container image
 
-![img](https://cdn.discordapp.com/attachments/280760711620067330/752508920022433833/image-20200907135011276.png)
+1. Login to Azure Portal: https://portal.azure.com/
 
-Bilden visar vårt projekt SimpleWebHalloWorld som en web-service på portarna 8080:80. 
+2. Navigate to Container registries
 
-## Publicera och kör Hello World container image via Azure Container Regestry
+3. In the top-left corner, click Add.
 
-- Logga in på azure portalen.
+4. Enter the required information, example:
 
-- Sök på container och klicka på "Container registries".
+   ![img](https://media.discordapp.net/attachments/280760711620067330/752514170833993769/unknown.png?width=399&height=300)
 
-- Fyll i fälten.
+5. Click on review + create.
 
-  ![img](https://cdn.discordapp.com/attachments/280760711620067330/752514170833993769/unknown.png)
+6. Open the registry and make sure it has been created, take note of the login name in the top-right corner. 
 
-  
+   Example:
 
-- Klicka på review + create.
+![img](https://media.discordapp.net/attachments/280760711620067330/753515894554099773/unknown.png?width=400&height=138)
 
-- Öppna registret som skapats och lägg märke till dess adress:
+7. Now we need to login to Azure in our CLI.
 
-  ![Container registry Overview in the portal](https://docs.microsoft.com/en-us/azure/container-registry/media/container-registry-get-started-portal/qs-portal-05.png) 
+   Enter the following command:
 
-- Logga in via azure i CLI:![img](https://media.discordapp.net/attachments/280760711620067330/752515793723588659/unknown.png)
+   ```
+   az login
+   ```
 
-- För att kunna publicera registret måste man tagga med register-loginservern: ![img](https://media.discordapp.net/attachments/280760711620067330/752516667984052424/unknown.png)
+   and then:
 
-- För att ladda upp registret använder vi oss av docker push, detta skapar repot med webtest: ![img](https://cdn.discordapp.com/attachments/280760711620067330/752537737999024138/image-20200907151554292.png)
-- Sedan tar vi bort vår img lokalt och vi får Untagged på de images som den image som det berör. ![img](https://cdn.discordapp.com/attachments/280760711620067330/752517983485820979/unknown.png)
+   *Note: make sure that you're still logged in to Docker, otherwise run the docker login command again.*
 
+   ```
+   az acr login --name <register_name.azurecr.io>
+   ```
 
+   This will login to your specified azure registry.
 
-I Azure portalen kan vi nu se att vårt repo är uppladdat: ![List container images in the portal](https://docs.microsoft.com/en-us/azure/container-registry/media/container-registry-get-started-portal/qs-portal-09.png)
+8. If we want to publish our container image, we need to tag it, so we enter the following command:
 
-Testa så att det går att köra ifrån cloudet efter att vi tagit bort vår image lokalt:![img](https://cdn.discordapp.com/attachments/280760711620067330/752519137590247474/unknown.png)
+   ```
+   docker tag <source-image_name> <register_name.azurecr.io>/<target-image_name>:<tag>
+   ```
 
-Om allt fungerar som det ska kommer vi nu få vår sha-nyckel som respons och det går att komma åt registret via localhost:8080.
+9. To push the tagged container, we enter the following: 
 
+   ```
+   docker push <registry_name.azurecr.io>/<target-image_name>:<tag>
+   ```
 
+   *Note: after the container has been pushed you may remove it locally with the docker rmi command.*
 
-## 3a: Azure Container Instance
+   In Azure portal you should now see your repository in the services tab. 
 
-Log in to Azure in your cli: az acr login --name <myRegistryName>
+   Example:
 
-Create a resource group: az group create --name <myResourceGroup> --location northeurope
+   ![image-20200910093751858](C:\Users\Greattech\AppData\Roaming\Typora\typora-user-images\image-20200910093751858.png)
 
-Authenticate using the server principal
+   *Note: If you removed your local image, check that you can pull and run the container locally by entering the following command in your CLI:*
 
-Navigate to your registry inside the azure portal, in the meny on the left klick Access Keys.
+   ```
+   docker run -d -p 8080:80 <registry_name.azurecr.io>/<image_name>:<tag>
+   ```
 
-Enable Admin user then run the following script:
+   If everything works we should now get our SSH-key as response in the CLI.
 
-az container create \
-    --resource-group myResourceGroup \
-    --name mycontainer \
-    --image mycontainerregistry.azurecr.io/myimage:v1 \
-    --registry-login-server mycontainerregistry.azurecr.io \
-    --registry-username <servicePrincipalID> \
-    --registry-password <servicePrincipalPassword>
+   ## 3: Azure Container Instance
+
+   We will now run our container in the cloud by using ACI (Azure Container Instance).
+
+   1. First we need to login to Azure, enter:
+
+   ```
+   az login
+   ```
+
+   Find your registry with the container that you want to run in the cloud.
+
+   2. Login with your registryname 
+
+      ```
+      az acr login --name <registry_name.azurecr.io>
+      ```
+
+   *If you don't have a resource group already, you need to create one. You can enter the following command:*
+
+```
+az group create --name --location northeurope
+```
+
+3. Authenticate using the service principal
+
+   Navigate to your registry inside the Azure portal, in the menu on the left click Access Keys.
+
+   Enable the Admin user, example:
+
+   ![img](https://media.discordapp.net/attachments/280760711620067330/753514736712286259/unknown.png?width=720&height=586)
+
+4. Open your CLI and run the following script:
+
+   ```
+   az container create
+   --resource-group <resource_group>
+   --name <container_name>
+   --image <container_registry.azurecr.io>/<image_name>:<tag>
+   --registry-login-server <container_registry.azurecr.io>
+   --registry-username <user_name>
+   --registry-password <password>
+   ```
+
+ 
