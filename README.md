@@ -1,5 +1,9 @@
 # Blogg
 
-Detta är bloggen för buddy xx
+This guide is an introduction to the cloud and how to use resources like Azure, Azure Dev Ops, Docker and more.
 
-Vår [blogg](index.md)
+Our [blogg](index.md)
+
+```
+Written by Anton Norgen and Benjamin Yttertröm 09-2020.
+```
