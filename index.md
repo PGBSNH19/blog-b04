@@ -10,16 +10,11 @@ Lektion:
 
 [04: Continuous Integration and Deployment](04.md)
 
-
 [05: Databases in Azure](05.md)
 
-06: beskrivning
+[06: Azure Release and Deployment](06.md)
 
-07: beskrivning
-
-08: beskrivning
-
-09: beskrivning
+[09: Microsoft Application Insights](09.md)
 
 10: beskrivning
 
