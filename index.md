@@ -14,10 +14,6 @@ Lektion:
 
 [06: Azure Release and Deployment](06.md)
 
-[09: Microsoft Application Insights](09.md)
+[07: Microsoft Application Insights](09.md)
 
-10: beskrivning
 
-11: beskrivning
-
-12: beskrivning
